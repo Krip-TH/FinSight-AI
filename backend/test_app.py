@@ -78,3 +78,33 @@ def test_compare_validation_and_settings_consent(service):
     assert c.post('/api/settings',json={'key':'test-key-only','approve_requests':True}).status_code==200
     assert 'key' not in c.get('/api/health').json()
     assert c.post('/api/settings/clear').json()['ai_ready'] is False
+
+def test_failed_provider_calls_consume_limit_and_stop_retry(service,monkeypatch):
+    m,c=service;id=put(c);calls=[]
+    async def failing_provider(prompt):
+        calls.append(prompt)
+        raise m.HTTPException(502,'Provider unavailable')
+    monkeypatch.setattr(m,'call_gemini',failing_provider)
+    c.post('/api/settings',json={'key':'test-key-only','approve_requests':True,'max_requests':1})
+    request={'doc_ids':[id],'use_cache':False}
+    assert c.post('/api/analyze/summary',json=request).status_code==502
+    assert c.get('/api/health').json()['requests_remaining']==0
+    assert c.post('/api/analyze/summary',json=request).status_code==429
+    assert len(calls)==1
+    records=c.get('/api/runs').json()
+    assert len(records)==1 and records[0]['status']=='error'
+    assert records[0]['api_ms']>=0
+
+def test_cache_remains_available_after_provider_limit(service,monkeypatch):
+    m,c=service;id=put(c);calls=[]
+    async def provider(prompt):
+        calls.append(prompt);chunk=m.retrieve([id],'Revenue',1)[0]
+        return {'claims':[{'label':'Revenue','text':'123 million','chunk_id':chunk['id'],'quote':'Revenue USD 123 million'}]},{}
+    monkeypatch.setattr(m,'call_gemini',provider)
+    c.post('/api/settings',json={'key':'test-key-only','approve_requests':True,'max_requests':1})
+    request={'doc_ids':[id]}
+    assert c.post('/api/analyze/summary',json=request).json()['cached'] is False
+    assert c.post('/api/analyze/summary',json=request).json()['cached'] is True
+    assert c.get('/api/health').json()['requests_used']==1
+    assert len(calls)==1
+    assert c.post('/api/settings',json={'key':'test-key-only','approve_requests':True,'max_requests':0}).status_code==422

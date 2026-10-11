@@ -1,0 +1,193 @@
+{
+  "type": "live_provider_test",
+  "maximum_authorized_calls": 3,
+  "started_at": "2026-10-11T19:21:00.366667+07:00",
+  "model": "gemini-2.5-flash",
+  "documents": [
+    {
+      "company": "Apple",
+      "period": "FY2025 สิ้นสุด 27 กันยายน 2025",
+      "source_url": "https://s2.q4cdn.com/470004039/files/doc_financials/2025/ar/_10-K-2025-As-Filed.pdf",
+      "pages": 80,
+      "sha256": "3eb270b22acb7d8d8e9c32a43dc221dec3345f8e4bca02755fdbc1ee16c823de",
+      "doc_id": "9e26c19bb04b48249ff680ba65e12b63"
+    },
+    {
+      "company": "Microsoft",
+      "period": "FY2025 สิ้นสุด 30 มิถุนายน 2025",
+      "source_url": "https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/MSFT_FY25q4_10K",
+      "pages": 158,
+      "sha256": "f0e97f9c1f0efbf7d1cb4fc627f23abe44f9844aa83689dcb2c666ac192d5489",
+      "doc_id": "4a4680e151a24e6382c1d58743127ffe"
+    }
+  ],
+  "attempts": [
+    {
+      "operation": "summary",
+      "question": "",
+      "http_status": 502,
+      "provider_status": "404",
+      "result": {
+        "detail": "ไม่พบโมเดลนี้ กรุณาตรวจชื่อโมเดลและสิทธิใช้งาน"
+      },
+      "model": "gemini-2.5-flash"
+    },
+    {
+      "operation": "qa",
+      "model": "gemini-3.5-flash-lite",
+      "question": "รายได้รวมและกำไรสุทธิปีบัญชี 2025 เท่าไร ระบุหน่วยและวันสิ้นสุดรอบบัญชี",
+      "http_status": 200,
+      "provider_status": null,
+      "result": {
+        "title": "รายได้รวมและกำไรสุทธิปีบัญชี 2025 ของ Apple",
+        "status": "answered",
+        "claims": [
+          {
+            "label": "วันสิ้นสุดรอบบัญชีปี 2025",
+            "text": "รอบปีบัญชี 2025 สิ้นสุดวันที่ 27 กันยายน 2025",
+            "quote": "September 27,\n2025",
+            "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+            "page": 32,
+            "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+            "source_validation": "exact_quote_found; semantic correctness requires human review"
+          },
+          {
+            "label": "รายได้รวม (Total net sales) ปี 2025",
+            "text": "รายได้รวม (Total net sales) สำหรับปีบัญชี 2025 เท่ากับ 416,161 ล้านดอลลาร์",
+            "quote": "Total net sales\n \n416,161",
+            "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+            "page": 32,
+            "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+            "source_validation": "exact_quote_found; semantic correctness requires human review"
+          },
+          {
+            "label": "กำไรสุทธิ (Net income) ปี 2025",
+            "text": "กำไรสุทธิ (Net income) สำหรับปีบัญชี 2025 เท่ากับ 112,010 ล้านดอลลาร์",
+            "quote": "Net income\n$ \n112,010",
+            "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+            "page": 32,
+            "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+            "source_validation": "exact_quote_found; semantic correctness requires human review"
+          },
+          {
+            "label": "หน่วยของตัวเลขทางการเงิน",
+            "text": "หน่วยของงบกำไรเบ็ดเสร็จแสดงเป็นหน่วยล้านดอลลาร์ (In millions)",
+            "quote": "(In millions, except number of shares, which are reflected in thousands, and per-share amounts)",
+            "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+            "page": 32,
+            "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+            "source_validation": "exact_quote_found; semantic correctness requires human review"
+          }
+        ],
+        "limitations": [
+          "ตรวจพบข้อความอ้างอิงในเอกสารแล้ว แต่ยังต้องตรวจว่าหลักฐานรองรับความหมายและตัวเลขของคำตอบ"
+        ],
+        "rejected_claims": 0,
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "grounded-v1",
+        "cached": false,
+        "elapsed_ms": 8423.98,
+        "retrieval_ms": 8.75,
+        "api_ms": 8414.77,
+        "usage": {
+          "promptTokenCount": 11747,
+          "candidatesTokenCount": 544,
+          "totalTokenCount": 12291,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 11747
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "documents": [
+          {
+            "id": "9e26c19bb04b48249ff680ba65e12b63",
+            "name": "Apple_FY2025_10K.pdf",
+            "period": "FY2025 สิ้นสุด 27 กันยายน 2025",
+            "company": "Apple"
+          }
+        ],
+        "run_id": "4b7ef73667ab4f198621dd28b39ebae3"
+      }
+    },
+    {
+      "operation": "compare",
+      "model": "gemini-3.5-flash-lite",
+      "question": "",
+      "http_status": 502,
+      "provider_status": "503",
+      "result": {
+        "detail": "บริการ AI ไม่พร้อมใช้งาน"
+      }
+    }
+  ],
+  "quality_scoring": "Not scored: requires independent human review",
+  "human_timing_experiment": false,
+  "quota_after": {
+    "status": "ok",
+    "ai_ready": true,
+    "model": "gemini-3.5-flash-lite",
+    "prompt_version": "grounded-v1",
+    "provider": "Gemini",
+    "max_upload_mb": 25,
+    "max_requests": 2,
+    "requests_used": 2,
+    "requests_remaining": 0
+  },
+  "backend_run_records": [
+    {
+      "id": "ad57fa8980aa4ba886b5dde09efe45e2",
+      "operation": "compare",
+      "doc_ids": "[\"9e26c19bb04b48249ff680ba65e12b63\", \"4a4680e151a24e6382c1d58743127ffe\"]",
+      "question": "",
+      "model": "gemini-3.5-flash-lite",
+      "prompt_version": "grounded-v1",
+      "elapsed_ms": 1026.71,
+      "retrieval_ms": 24.39,
+      "api_ms": 1001.82,
+      "cached": 0,
+      "status": "error",
+      "payload": "{\"error\": \"บริการ AI ไม่พร้อมใช้งาน\", \"provider_status\": \"503\"}",
+      "created_at": "2026-10-11 12:22:35"
+    },
+    {
+      "id": "4b7ef73667ab4f198621dd28b39ebae3",
+      "operation": "qa",
+      "doc_ids": "[\"9e26c19bb04b48249ff680ba65e12b63\"]",
+      "question": "รายได้รวมและกำไรสุทธิปีบัญชี 2025 เท่าไร ระบุหน่วยและวันสิ้นสุดรอบบัญชี",
+      "model": "gemini-3.5-flash-lite",
+      "prompt_version": "grounded-v1",
+      "elapsed_ms": 8423.98,
+      "retrieval_ms": 8.75,
+      "api_ms": 8414.77,
+      "cached": 0,
+      "status": "answered",
+      "payload": "{\"title\": \"รายได้รวมและกำไรสุทธิปีบัญชี 2025 ของ Apple\", \"status\": \"answered\", \"claims\": [{\"label\": \"วันสิ้นสุดรอบบัญชีปี 2025\", \"text\": \"รอบปีบัญชี 2025 สิ้นสุดวันที่ 27 กันยายน 2025\", \"quote\": \"September 27,\\n2025\", \"doc_id\": \"9e26c19bb04b48249ff680ba65e12b63\", \"page\": 32, \"chunk_id\": \"9e26c19bb04b48249ff680ba65e12b63:32:0\", \"source_validation\": \"exact_quote_found; semantic correctness requires human review\"}, {\"label\": \"รายได้รวม (Total net sales) ปี 2025\", \"text\": \"รายได้รวม (Total net sales) สำหรับปีบัญชี 2025 เท่ากับ 416,161 ล้านดอลลาร์\", \"quote\": \"Total net sales\\n \\n416,161\", \"doc_id\": \"9e26c19bb04b48249ff680ba65e12b63\", \"page\": 32, \"chunk_id\": \"9e26c19bb04b48249ff680ba65e12b63:32:0\", \"source_validation\": \"exact_quote_found; semantic correctness requires human review\"}, {\"label\": \"กำไรสุทธิ (Net income) ปี 2025\", \"text\": \"กำไรสุทธิ (Net income) สำหรับปีบัญชี 2025 เท่ากับ 112,010 ล้านดอลลาร์\", \"quote\": \"Net income\\n$ \\n112,010\", \"doc_id\": \"9e26c19bb04b48249ff680ba65e12b63\", \"page\": 32, \"chunk_id\": \"9e26c19bb04b48249ff680ba65e12b63:32:0\", \"source_validation\": \"exact_quote_found; semantic correctness requires human review\"}, {\"label\": \"หน่วยของตัวเลขทางการเงิน\", \"text\": \"หน่วยของงบกำไรเบ็ดเสร็จแสดงเป็นหน่วยล้านดอลลาร์ (In millions)\", \"quote\": \"(In millions, except number of shares, which are reflected in thousands, and per-share amounts)\", \"doc_id\": \"9e26c19bb04b48249ff680ba65e12b63\", \"page\": 32, \"chunk_id\": \"9e26c19bb04b48249ff680ba65e12b63:32:0\", \"source_validation\": \"exact_quote_found; semantic correctness requires human review\"}], \"limitations\": [\"ตรวจพบข้อความอ้างอิงในเอกสารแล้ว แต่ยังต้องตรวจว่าหลักฐานรองรับความหมายและตัวเลขของคำตอบ\"], \"rejected_claims\": 0, \"model\": \"gemini-3.5-flash-lite\", \"prompt_version\": \"grounded-v1\", \"cached\": false, \"elapsed_ms\": 8423.98, \"retrieval_ms\": 8.75, \"api_ms\": 8414.77, \"usage\": {\"promptTokenCount\": 11747, \"candidatesTokenCount\": 544, \"totalTokenCount\": 12291, \"promptTokensDetails\": [{\"modality\": \"TEXT\", \"tokenCount\": 11747}], \"serviceTier\": \"standard\"}, \"documents\": [{\"id\": \"9e26c19bb04b48249ff680ba65e12b63\", \"name\": \"Apple_FY2025_10K.pdf\", \"period\": \"FY2025 สิ้นสุด 27 กันยายน 2025\", \"company\": \"Apple\"}]}",
+      "created_at": "2026-10-11 12:22:34"
+    },
+    {
+      "id": "21565c8fe9ff47c99e849ef48986a098",
+      "operation": "summary",
+      "doc_ids": "[\"9e26c19bb04b48249ff680ba65e12b63\"]",
+      "question": "",
+      "model": "gemini-2.5-flash",
+      "prompt_version": "grounded-v1",
+      "elapsed_ms": 562.04,
+      "retrieval_ms": 13.0,
+      "api_ms": 548.67,
+      "cached": 0,
+      "status": "error",
+      "payload": "{\"error\": \"ไม่พบโมเดลนี้ กรุณาตรวจชื่อโมเดลและสิทธิใช้งาน\", \"provider_status\": \"404\"}",
+      "created_at": "2026-10-11 12:21:24"
+    }
+  ],
+  "stopped_reason": "Authorized total of three provider calls reached. No further calls permitted.",
+  "actual_provider_calls": 3,
+  "key_cleared_after_test": true,
+  "notes": [
+    "The model changed after the first 404. One initial request plus two remaining requests equals the authorized total of three.",
+    "Successful QA output is raw provider output validated for quote presence, not independently scored AI quality."
+  ]
+}
