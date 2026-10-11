@@ -15,8 +15,9 @@ DATA.mkdir(parents=True, exist_ok=True)
 UPLOADS = DATA/'uploads'; UPLOADS.mkdir(exist_ok=True)
 DB = DATA/'seminar.sqlite3'
 PROMPT_VERSION = 'grounded-v1'
-CONFIG = {'key': os.getenv('GEMINI_API_KEY', ''), 'model': os.getenv('GEMINI_MODEL', 'gemini-2.5-flash'),
-          'enabled': os.getenv('AI_REQUESTS_APPROVED','').lower() == 'true'}
+CONFIG = {'key': os.getenv('GEMINI_API_KEY', ''), 'model': os.getenv('GEMINI_MODEL', 'gemini-3.5-flash-lite'),
+          'enabled': os.getenv('AI_REQUESTS_APPROVED','').lower() == 'true',
+          'max_requests': 3, 'requests_used': 0}
 
 def connect():
     db=sqlite3.connect(DB, timeout=30); db.row_factory=sqlite3.Row; return db
@@ -46,22 +47,26 @@ def document(doc_id):
 @app.get('/api/health')
 def health():
     return {'status':'ok','ai_ready': bool(CONFIG['key'] and CONFIG['enabled']), 'model':CONFIG['model'],
-            'prompt_version':PROMPT_VERSION, 'provider':'Gemini','max_upload_mb':25}
+            'prompt_version':PROMPT_VERSION, 'provider':'Gemini','max_upload_mb':25,
+            'max_requests':CONFIG['max_requests'], 'requests_used':CONFIG['requests_used'],
+            'requests_remaining':max(0,CONFIG['max_requests']-CONFIG['requests_used'])}
 
 class Settings(BaseModel):
     key: str = Field(min_length=10, max_length=500)
-    model: str = Field(default='gemini-2.5-flash', pattern=r'^[a-zA-Z0-9.\-]+$')
+    model: str = Field(default='gemini-3.5-flash-lite', pattern=r'^[a-zA-Z0-9.\-]+$')
     approve_requests: bool = False
+    max_requests: int = Field(default=3, ge=1, le=100)
 
 @app.post('/api/settings')
 def settings(value:Settings):
     if not value.approve_requests: raise HTTPException(400,'ต้องยืนยันการส่งข้อมูลและเรียกบริการก่อนเปิดใช้ AI')
-    CONFIG.update(key=value.key,model=value.model,enabled=True)
+    CONFIG.update(key=value.key,model=value.model,enabled=True,
+                  max_requests=value.max_requests,requests_used=0)
     return health() # Never return the key.
 
 @app.post('/api/settings/clear')
 def clear_settings():
-    CONFIG.update(key='',enabled=False); return health()
+    CONFIG.update(key='',enabled=False,requests_used=0); return health()
 
 @app.get('/api/documents')
 def documents():
@@ -185,8 +190,9 @@ async def call_gemini(prompt):
             'contents':[{'role':'user','parts':[{'text':prompt}]}],
             'generationConfig':{'temperature':0.0,'maxOutputTokens':6000,'responseMimeType':'application/json'}})
     if resp.status_code!=200:
-        messages={429:'บริการ AI ถึงโควตาหรือจำกัดความถี่ กรุณารอสักครู่',400:'ตรวจ API Key ชื่อโมเดล และสิทธิใช้งาน',403:'API Key ไม่มีสิทธิใช้บริการ'}
-        raise HTTPException(502,messages.get(resp.status_code,'บริการ AI ไม่พร้อมใช้งาน'))
+        messages={503:'บริการ Gemini ไม่พร้อมใช้งานชั่วคราว ไม่มีการลองซ้ำอัตโนมัติ',429:'บริการ AI ถึงโควตาหรือจำกัดความถี่ กรุณารอสักครู่',400:'ตรวจ API Key ชื่อโมเดล และสิทธิใช้งาน',401:'บริการ AI ไม่ยอมรับ Key นี้ กรุณาตรวจประเภท Key และสิทธิใช้งาน',403:'API Key ไม่มีสิทธิใช้บริการ',404:'ไม่พบโมเดลนี้ กรุณาตรวจชื่อโมเดลและสิทธิใช้งาน'}
+        raise HTTPException(502,messages.get(resp.status_code,'บริการ AI ไม่พร้อมใช้งาน'),
+                            headers={'X-Provider-Status':str(resp.status_code)})
     body=resp.json(); candidates=body.get('candidates',[])
     if not candidates: raise HTTPException(502,'บริการ AI ไม่ส่งคำตอบกลับมา')
     text=''.join(p.get('text','') for p in candidates[0].get('content',{}).get('parts',[]) if not p.get('thought'))
@@ -223,16 +229,24 @@ async def analyze(operation:str,request:AnalysisRequest):
     retrieval_ms=round((time.perf_counter()-before)*1000,2)
     context='\n\n'.join(f'CHUNK_ID={x["id"]} DOC_ID={x["doc_id"]} PDF_PAGE={x["page"]}\n{x["text"]}' for x in chunks)
     prompt=f'Operation: {operation}\nTask: {task}\nDocument metadata: {json.dumps([{k:v for k,v in x.items() if k in ("id","name","period","company")} for x in docs],ensure_ascii=False)}\nBEGIN_EVIDENCE\n{context}\nEND_EVIDENCE'
+    # Reserve before awaiting the provider so concurrent requests cannot exceed the limit.
+    # Failed calls count too; cache hits above do not consume the allowance.
+    if CONFIG['requests_used']>=CONFIG['max_requests']:
+        raise HTTPException(429,'ครบจำนวนเรียก AI ที่อนุญาตแล้ว กรุณาตั้งค่าโควตาใหม่ก่อนใช้งานต่อ')
+    CONFIG['requests_used']+=1
     before=time.perf_counter()
     try:
         raw,usage=await call_gemini(prompt); result=validate_answer(raw,chunks)
     except (httpx.HTTPError, ValueError) as exc:
         elapsed=round((time.perf_counter()-started)*1000,2)
-        save_run(operation,request,'error',{'error_type':type(exc).__name__},elapsed,retrieval_ms)
+        save_run(operation,request,'error',{'error_type':type(exc).__name__},elapsed,retrieval_ms,
+                 round((time.perf_counter()-before)*1000,2))
         raise HTTPException(502,'เชื่อมบริการ AI หรืออ่านคำตอบไม่สำเร็จ กรุณาลองใหม่')
     except HTTPException as exc:
         elapsed=round((time.perf_counter()-started)*1000,2)
-        save_run(operation,request,'error',{'error':exc.detail},elapsed,retrieval_ms)
+        save_run(operation,request,'error',{'error':exc.detail,
+                 'provider_status':(exc.headers or {}).get('X-Provider-Status')},elapsed,retrieval_ms,
+                 round((time.perf_counter()-before)*1000,2))
         raise
     api_ms=round((time.perf_counter()-before)*1000,2); elapsed=round((time.perf_counter()-started)*1000,2)
     result.update(model=CONFIG['model'],prompt_version=PROMPT_VERSION,cached=False,elapsed_ms=elapsed,
