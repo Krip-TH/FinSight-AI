@@ -17,29 +17,38 @@ python -m venv .venv
 npm --prefix frontend ci
 ```
 
-## พัฒนาเว็บ
+## เปิดเว็บด้วยขั้นตอนเดียว
 
-เปิด Terminal สองหน้าต่าง:
+ดับเบิลคลิก `Run-Web.cmd` ในโฟลเดอร์โปรเจกต์ ระบบจะเปิด Backend และ Frontend พร้อมกัน แล้วเปิดเว็บให้อัตโนมัติเมื่อพร้อมใช้งาน
+แก้โค้ดแล้วหน้าเว็บและ Backend โหลดใหม่ได้ ไม่ต้องสั่ง Build ทุกครั้ง
+
+หรือเปิด Terminal ใน VS Code แล้วรัน:
 
 ```powershell
-# Terminal 1: Backend พร้อมโหลดใหม่เมื่อแก้ไฟล์
-.\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+.\Run-Web.cmd
 ```
 
+ใน VS Code กด **Ctrl+Shift+B** หรือ Terminal → Run Task → **Run: FinSight web** เพื่อเปิดทั้งสองส่วนด้วยกัน
+หน้าเว็บอยู่ที่ http://127.0.0.1:5173 และ Backend อยู่ที่ http://127.0.0.1:8000
+หยุดทั้งสองส่วนด้วย **Ctrl+C** ใน Terminal ที่เปิดเว็บ ไม่ต้องปิดแยกสองหน้าต่าง
+
+ต้องติดตั้งตามขั้นตอนครั้งแรกด้านบนก่อน หากพอร์ตถูกใช้งาน ระบบจะแสดงปัญหาโดยไม่ปิดโปรแกรมอื่น
+เลือกพอร์ตอื่นได้ เช่น:
+
 ```powershell
-# Terminal 2: Frontend
-npm --prefix frontend run dev
+.\Run-Web.cmd --backend-port 8002 --frontend-port 5174
 ```
 
-เปิด URL ที่ Vite แสดง (ปกติ http://127.0.0.1:5173)
-Frontend ส่งคำขอ /api ไป Backend ผ่าน Vite proxy
-ใน VS Code ใช้ Terminal → Run Task → Dev: backend หรือ Dev: frontend ได้เช่นกัน
+ตัวเปิดตรวจ Backend, Frontend และ API proxy ก่อนเปิดเบราว์เซอร์ ใช้ `--no-browser` หากต้องการเปิดเบราว์เซอร์เอง
+`start.ps1` เรียกตัวเปิดเดียวกัน ส่วน task `Dev: backend` และ `Dev: frontend` ยังมีให้ใช้แยกเมื่อต้องแก้ปัญหา
 
-## เปิดแบบสาธิตในเครื่อง
+## เปิดเว็บจากไฟล์ Build
+
+หากต้องการรันเฉพาะ Backend ที่เสิร์ฟหน้าเว็บ Build:
 
 ```powershell
-npm --prefix frontend run build
-.\start.ps1
+npm.cmd --prefix frontend run build
+.\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
 
 เปิด http://127.0.0.1:8000 ระบบนี้ยังไม่ได้เผยแพร่สู่เว็บสาธารณะ
