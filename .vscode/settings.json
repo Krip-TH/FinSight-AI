@@ -2,7 +2,7 @@
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestArgs": ["backend/test_app.py"],
+  "python.testing.pytestArgs": ["backend"],
   "files.exclude": {"**/__pycache__": true},
   "search.exclude": {"**/node_modules": true, ".venv": true, "data": true, "frontend/dist": true}
 }

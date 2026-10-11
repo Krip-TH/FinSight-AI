@@ -8,6 +8,8 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from backend.research import financial_series, topic_evidence
+from backend.market import market_history
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(os.getenv('SEMINAR_DATA_DIR', str(ROOT/'data')))
@@ -37,6 +39,10 @@ async def lifespan(app):
     init_db(); yield
 
 app=FastAPI(title='AI Investment Research Intelligence Platform', lifespan=lifespan)
+
+@app.get('/api/market/history')
+async def historical_prices(symbol:str='AAPL',period:str='1mo'):
+    return await market_history(symbol,period)
 
 def norm(s): return re.sub(r'\s+', ' ', str(s)).strip()
 def document(doc_id):
@@ -151,6 +157,22 @@ def retrieve(doc_ids,query,limit=12):
 @app.get('/api/documents/{doc_id}/search')
 def search(doc_id:str,q:str='revenue net income risk factors'):
     document(doc_id); return retrieve([doc_id],q,6)
+
+@app.get('/api/documents/{doc_id}/research')
+def research_document(doc_id:str,kind:str='stock'):
+    if kind not in ('stock','crypto'): raise HTTPException(400,'เลือกประเภท stock หรือ crypto')
+    row=document(doc_id)
+    with connect() as db:
+        chunks=[dict(x) for x in db.execute('SELECT page,text FROM chunks WHERE doc_id=? ORDER BY page,id',(doc_id,)).fetchall()]
+    financial={'years':[],'period_ends':[],'metrics':[],'status':'not_applicable'}
+    if kind=='stock':
+        with pymupdf.open(row['path']) as pdf:
+            financial=financial_series((i+1,p.get_text('text')) for i,p in enumerate(pdf))
+    return {'document':{k:row[k] for k in ('id','name','company','period','source_url')},
+            'kind':kind,'financial':financial,'topics':topic_evidence(chunks,kind),
+            'limitations':['ข้อความที่พบเป็นผลค้นคำสำคัญ ไม่ใช่ข้อสรุปว่ามีหรือไม่มีความเสี่ยง',
+                           'กราฟสกัดจากตารางข้อความรูปแบบที่รองรับ ต้องตรวจหน่วยและคอลัมน์กับ PDF',
+                           'ไม่มีข้อมูลราคาเรียลไทม์ การคาดการณ์ราคา หรือคำแนะนำซื้อขาย']}
 
 class AnalysisRequest(BaseModel):
     doc_ids:list[str]=Field(min_length=1,max_length=2)

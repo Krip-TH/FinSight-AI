@@ -1,0 +1,52 @@
+import React,{useEffect,useState} from 'react';
+const colors=['#0f766e','#6366f1'];
+const fmt=n=>Number(n).toLocaleString('th-TH',{maximumFractionDigits:2});
+async function get(path,signal){const r=await fetch('/api'+path,{signal});const body=await r.json();if(!r.ok)throw new Error(body.detail||'โหลดข้อมูลไม่สำเร็จ');return body;}
+
+function FinancialChart({reports,metric}){
+  const series=reports.map(r=>({name:r.document.company||r.document.name,financial:r.financial,
+    data:r.financial.metrics.find(m=>m.key===metric)})).filter(r=>r.data);
+  if(!series.length)return <p className="empty">ยังไม่มีตัวเลขที่สกัดได้สำหรับประเด็นนี้ ไม่แทนค่าที่ขาดด้วยศูนย์</p>;
+  const years=[...new Set(series.flatMap(r=>r.financial.years))].sort();
+  const all=series.flatMap(r=>r.data.values);const max=Math.max(1,...all),min=Math.min(0,...all),scale=max-min;const y=v=>265-(v-min)/scale*220;
+  return <><p className="footnote">หน่วย: ล้าน $ ตามต้นฉบับ · ต้องตรวจสกุลเงินจริงก่อนเปรียบเทียบ</p>
+    <svg className="research-chart" viewBox="0 0 760 320" role="img" aria-label="กราฟแท่งตัวเลขจากงบการเงินตามปีบัญชี">
+      {[0,.25,.5,.75,1].map(t=><g key={t}><line x1="78" x2="730" y1={265-t*220} y2={265-t*220} stroke="#e2e8f0"/><text x="70" y={270-t*220} textAnchor="end" fontSize="11" fill="#64748b">{fmt(min+scale*t)}</text></g>)}
+      {years.map((year,yi)=><g key={year}><text x={175+yi*(530/years.length)} y="292" textAnchor="middle" fontSize="12">FY{year}</text>
+        {series.map((r,si)=>{const i=r.financial.years.indexOf(year);if(i<0)return null;const v=r.data.values[i];return <rect key={r.name} x={130+yi*(530/years.length)+si*42} y={Math.min(y(v),y(0))} width="34" height={Math.abs(y(v)-y(0))} fill={colors[si%2]}><title>{r.name} FY{year}: {fmt(v)} · {r.financial.period_ends[i]}</title></rect>})}</g>)}
+    </svg><div className="chart-legend">{series.map((r,i)=><span key={r.name}><i style={{background:colors[i%2]}}/>{r.name}</span>)}</div>
+    {series.some(r=>r.data.values.some(v=>v<0))&&<p className="footnote">ค่าติดลบแสดงเป็นแท่งใต้เส้นศูนย์ และมีตัวเลขครบในตารางด้านล่าง</p>}
+  </>;
+}
+
+export function ResearchDashboard({docs,onEvidence}){
+  const [ids,setIds]=useState([]),[kind,setKind]=useState('stock'),[reports,setReports]=useState([]),[metric,setMetric]=useState('revenue'),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  useEffect(()=>{setIds(old=>old.length?old:docs.slice(0,2).map(d=>d.id))},[docs]);
+  useEffect(()=>{const controller=new AbortController();setReports([]);setError('');if(!ids.length)return;setBusy(true);
+    Promise.all(ids.map(id=>get(`/documents/${id}/research?kind=${kind}`,controller.signal))).then(setReports).catch(e=>{if(e.name!=='AbortError')setError(e.message)}).finally(()=>{if(!controller.signal.aborted)setBusy(false)});
+    return ()=>controller.abort();},[ids.join(','),kind]);
+  const metrics=[['revenue','รายได้รวม'],['net_income','กำไรสุทธิ'],['operating_income','กำไรจากการดำเนินงาน'],['research_development','วิจัยและพัฒนา']];
+  return <div className="research-workspace"><div className="card research-controls"><label>ประเภทการศึกษา<select value={kind} onChange={e=>setKind(e.target.value)}><option value="stock">หุ้น / รายงานการเงิน</option><option value="crypto">คริปโต / Whitepaper</option></select></label><div><p>เลือกเอกสารได้ 2 ฉบับ</p><div className="research-docs">{docs.map(d=><label key={d.id}><input type="checkbox" checked={ids.includes(d.id)} onChange={()=>setIds(old=>old.includes(d.id)?old.filter(x=>x!==d.id):old.length<2?[...old,d.id]:[old[1],d.id])}/>{d.company||d.name}</label>)}</div></div></div>
+    {error&&<p role="alert" className="error">{error}</p>}{busy&&<p role="status">กำลังค้นหลักฐานจากเอกสาร…</p>}
+    {!docs.length&&<div className="card empty">นำเข้า PDF ในคลังเอกสารก่อนเริ่มวิเคราะห์</div>}
+    {kind==='stock'&&reports.length>0&&<div className="card"><div className="research-title"><h2>กราฟผลประกอบการจากเอกสาร</h2><select aria-label="ตัวชี้วัดในกราฟ" value={metric} onChange={e=>setMetric(e.target.value)}>{metrics.map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></div><FinancialChart reports={reports} metric={metric}/>
+      <p className="period-note">FY ที่ชื่อเหมือนกันอาจสิ้นสุดคนละวัน กราฟนี้เปรียบเทียบข้อมูลรายงาน ไม่ได้จัดอันดับความน่าลงทุน</p>
+      <div className="table-wrap"><table><thead><tr><th>เอกสาร</th><th>ปีบัญชี / วันสิ้นสุด</th><th>ตัวเลข</th><th>อัตรากำไรสุทธิ*</th><th>หลักฐาน</th></tr></thead><tbody>{reports.flatMap(r=>{const m=r.financial.metrics.find(x=>x.key===metric),rev=r.financial.metrics.find(x=>x.key==='revenue'),net=r.financial.metrics.find(x=>x.key==='net_income');return m?r.financial.years.map((year,i)=><tr key={r.document.id+year}><td>{r.document.company||r.document.name}</td><td>FY{year}<small>{r.financial.period_ends[i]}</small></td><td>{fmt(m.values[i])}<small>{m.unit}</small></td><td>{rev&&net&&rev.values[i]!==0?fmt(net.values[i]/rev.values[i]*100)+'%':'ยังไม่มีข้อมูล'}</td><td><button className="source-link" onClick={()=>onEvidence({...m,doc_id:r.document.id})}>PDF หน้า {m.page}</button></td></tr>):[<tr key={r.document.id}><td>{r.document.company||r.document.name}</td><td colSpan="4">ยังไม่รองรับรูปแบบตารางนี้ ต้องอ่านหรือถามตอบจาก PDF</td></tr>]})}</tbody></table></div>
+      <p className="footnote">* คำนวณกำไรสุทธิ ÷ รายได้รวม × 100 ของบริษัทและปีเดียวกัน ไม่ใช่ตัวเลขที่ AI สร้าง สกัดแบบกฎจากงบภาษาอังกฤษที่มี 3 คอลัมน์และหน่วย millions; ไม่รองรับทุก PDF</p></div>}
+    {reports.map(r=><div className="card" key={r.document.id}><h2>{kind==='crypto'?'ตรวจประเด็น Whitepaper':'หลักฐานประกอบการประเมินความเสี่ยง'} · {r.document.company||r.document.name}</h2><p className="footnote">{r.document.period||'ยังไม่ระบุช่วงเวลา'} · ผลค้น keyword ไม่ใช้ AI และไม่กินโควตา Gemini</p><div className="topic-grid">{r.topics.map(t=><section key={t.label} className="topic-card"><h3>{t.label}</h3><span className={'evidence-badge '+(t.status==='found'?'found':'')}>{t.status==='found'?'พบข้อความที่เกี่ยวข้อง':'ยังไม่พบจากคำค้น'}</span>{t.passages.map((p,i)=><div key={i}><blockquote>{p.quote}</blockquote><button className="source-link" onClick={()=>onEvidence({...p,doc_id:r.document.id})}>อ่านบริบท · PDF หน้า {p.page}</button></div>)}</section>)}</div><p className="footnote">การพบคำไม่ยืนยันว่ามีความเสี่ยง และการไม่พบไม่ยืนยันว่าไม่มีความเสี่ยง ต้องอ่านบริบทและตรวจแหล่งอ้างอิงเพิ่มเติม</p></div>)}
+    {kind==='crypto'&&<p className="period-note">Whitepaper ไม่ใช่งบการเงิน ผลทดสอบ Apple/Microsoft ไม่รับรองคุณภาพการวิเคราะห์คริปโต ให้เลือกเอกสาร whitepaper ของสินทรัพย์นั้นก่อนตรวจประเด็น</p>}
+  </div>;
+}
+
+export function MarketDashboard(){
+  const [symbol,setSymbol]=useState('AAPL'),[period,setPeriod]=useState('1mo'),[data,setData]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  async function load(){setBusy(true);setError('');setData(null);try{setData(await get(`/market/history?symbol=${symbol}&period=${period}`))}catch(e){setError(e.message)}finally{setBusy(false)}}
+  const points=data?.points||[],low=points.length?Math.min(...points.map(p=>p.close)):0,high=points.length?Math.max(...points.map(p=>p.close)):0,span=high-low||1;
+  const line=points.map((p,i)=>`${65+i/(points.length-1)*640},${255-(p.close-low)/span*195}`).join(' ');
+  return <div className="research-workspace"><div className="card research-controls"><label>สินทรัพย์<select value={symbol} disabled={busy} onChange={e=>{setSymbol(e.target.value);setData(null)}}><option value="AAPL">Apple · AAPL</option><option value="MSFT">Microsoft · MSFT</option><option value="BTC-USD">Bitcoin · BTC-USD</option><option value="ETH-USD">Ethereum · ETH-USD</option></select></label><label>ช่วงย้อนหลัง<select value={period} disabled={busy} onChange={e=>{setPeriod(e.target.value);setData(null)}}><option value="1mo">1 เดือน</option><option value="3mo">3 เดือน</option><option value="1y">1 ปี</option></select></label><button className="primary" onClick={load} disabled={busy}>{busy?'กำลังโหลด…':'โหลดราคาย้อนหลัง'}</button></div>
+    <p className="period-note">ข้อมูลราคาจากแหล่งภายนอก แยกจากหลักฐานใน PDF ไม่ใช้ Gemini ไม่มีการส่ง Key ไปยังแหล่งราคา</p>{error&&<div role="alert" className="error">{error}</div>}
+    {data?<div className="card"><h2>{data.name} · {data.symbol}</h2><p className="footnote">{points[0].date} ถึง {points.at(-1).date} · {data.currency} · ราคาปิดรายวัน ไม่ใช่ราคาเรียลไทม์</p><div className="stats market-stats"><div><b>{fmt(points.at(-1).close)}</b><span>ราคาปิดล่าสุดในชุดข้อมูล · {data.currency}</span></div><div><b>{fmt((points.at(-1).close/points[0].close-1)*100)}%</b><span>การเปลี่ยนแปลงราคาปิดแรกถึงสุดท้าย*</span></div><div><b>{points.length}</b><span>จุดข้อมูลที่ใช้จริง</span></div></div>
+      <svg className="research-chart" viewBox="0 0 760 310" role="img" aria-label={`กราฟราคาปิดย้อนหลัง ${data.symbol}`}><text x="15" y="62" fontSize="12">{fmt(high)}</text><text x="15" y="257" fontSize="12">{fmt(low)}</text><polyline points={line} fill="none" stroke="#0f766e" strokeWidth="3"/>{points.map((p,i)=><circle key={p.timestamp} cx={65+i/(points.length-1)*640} cy={255-(p.close-low)/span*195} r="3" fill="#0f766e"><title>{p.date}: {fmt(p.close)} {data.currency}</title></circle>)}<text x="65" y="285" fontSize="12">{points[0].date}</text><text x="705" y="285" textAnchor="end" fontSize="12">{points.at(-1).date}</text></svg>
+      <p className="footnote">* ไม่รวมปันผล ค่าธรรมเนียม และการปรับแตกหุ้น ช่วงวันหยุดหุ้นกับคริปโตมีจำนวนจุดต่างกัน กราฟเว้นระยะตามลำดับจุดข้อมูล</p><a href={data.source_url} target="_blank" rel="noreferrer" className="source-link">ตรวจแหล่งข้อมูล · {data.source}</a><p className="footnote">ดึงข้อมูล {new Date(data.fetched_at).toLocaleString('th-TH')} {data.cached?'· ใช้ cache อายุไม่เกิน 15 นาที':''}</p>{data.limitations.map(x=><p key={x} className="footnote">• {x}</p>)}<details><summary>ดูข้อมูลที่ใช้วาดกราฟ</summary><div className="table-wrap"><table><thead><tr><th>วันที่ UTC</th><th>ราคาปิด · {data.currency}</th></tr></thead><tbody>{points.map(p=><tr key={p.timestamp}><td>{p.date}</td><td>{fmt(p.close)}</td></tr>)}</tbody></table></div></details></div>:!busy&&!error&&<div className="card empty">เลือกสินทรัพย์และช่วงเวลา แล้วโหลดข้อมูลจริงจากแหล่งราคา</div>}
+    <p className="footnote">ข้อมูลย้อนหลังช่วยตรวจบริบท ไม่รับรองผลตอบแทนในอนาคต และไม่มีสัญญาณซื้อขาย</p></div>;
+}

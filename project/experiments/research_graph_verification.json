@@ -1,0 +1,148 @@
+{
+  "created_at": "2026-10-11T19:34:02.772927+07:00",
+  "scope": "technical extraction and public-price integration; no additional Gemini requests or human experiment",
+  "documents": [
+    {
+      "company": "Apple",
+      "extraction": {
+        "years": [
+          "2025",
+          "2024",
+          "2023"
+        ],
+        "period_ends": [
+          "September 27, 2025",
+          "September 28, 2024",
+          "September 30, 2023"
+        ],
+        "metrics": [
+          {
+            "key": "revenue",
+            "label": "รายได้รวม",
+            "values": [
+              416161.0,
+              391035.0,
+              383285.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 32,
+            "quote": "Total net sales\n \n416,161 \n \n391,035 \n \n383,285"
+          },
+          {
+            "key": "net_income",
+            "label": "กำไรสุทธิ",
+            "values": [
+              112010.0,
+              93736.0,
+              96995.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 32,
+            "quote": "Net income\n$ \n112,010 \n$ \n93,736 \n$ \n96,995"
+          },
+          {
+            "key": "operating_income",
+            "label": "กำไรจากการดำเนินงาน",
+            "values": [
+              133050.0,
+              123216.0,
+              114301.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 32,
+            "quote": "Operating income\n \n133,050 \n \n123,216 \n \n114,301"
+          },
+          {
+            "key": "research_development",
+            "label": "วิจัยและพัฒนา",
+            "values": [
+              34550.0,
+              31370.0,
+              29915.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 32,
+            "quote": "Research and development\n \n34,550 \n \n31,370 \n \n29,915"
+          }
+        ],
+        "page": 32,
+        "unit_quote": "(In millions, except number of shares, which are reflected in thousands, and per-share amounts)",
+        "header_quote": "Apple Inc.\nCONSOLIDATED STATEMENTS OF OPERATIONS\n(In millions, except number of shares, which are reflected in thousands, and per-share amounts)\nYears ended\nSeptember 27,\n2025\nSeptember 28,\n2024\nSeptember 30,\n2023\nNet sales:\n   Products\n$ \n307,003 \n$ \n294,866 \n$ \n298,085 \n   Services\n \n109,158 \n \n96,169 \n \n85,200",
+        "status": "extracted",
+        "method": "rule-based income-statement text extraction"
+      },
+      "quote_check": "all extracted row quotes found on source page"
+    },
+    {
+      "company": "Microsoft",
+      "extraction": {
+        "years": [
+          "2025",
+          "2024",
+          "2023"
+        ],
+        "period_ends": [
+          "June 30, 2025",
+          "June 30, 2024",
+          "June 30, 2023"
+        ],
+        "metrics": [
+          {
+            "key": "revenue",
+            "label": "รายได้รวม",
+            "values": [
+              281724.0,
+              245122.0,
+              211915.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 49,
+            "quote": "Total revenue \n281,724  245,122   \n211,915"
+          },
+          {
+            "key": "net_income",
+            "label": "กำไรสุทธิ",
+            "values": [
+              101832.0,
+              88136.0,
+              72361.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 49,
+            "quote": "Net income \n $ 101,832  $ 88,136   $ \n72,361"
+          },
+          {
+            "key": "operating_income",
+            "label": "กำไรจากการดำเนินงาน",
+            "values": [
+              128528.0,
+              109433.0,
+              88523.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 49,
+            "quote": "Operating income \n  128,528   109,433    \n88,523"
+          },
+          {
+            "key": "research_development",
+            "label": "วิจัยและพัฒนา",
+            "values": [
+              32488.0,
+              29510.0,
+              27195.0
+            ],
+            "unit": "ล้าน $ ตามต้นฉบับ",
+            "page": 49,
+            "quote": "Research and development \n  \n32,488   \n29,510    \n27,195"
+          }
+        ],
+        "page": 49,
+        "unit_quote": "(In millions, except per share amounts) ",
+        "header_quote": "PART II \nItem 8 \n48 \nITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA  \nINCOME STATEMENTS \n \n(In millions, except per share amounts) \n  \n   \n \n  \n \n \nYear Ended June 30, \n \n2025   \n2024  \n \n2023",
+        "status": "extracted",
+        "method": "rule-based income-statement text extraction"
+      },
+      "quote_check": "all extracted row quotes found on source page"
+    }
+  ]
+}
