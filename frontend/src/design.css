@@ -175,3 +175,40 @@ footer { display: flex; justify-content: space-between; gap: 14px; border-top: 1
 @media(prefers-reduced-motion:reduce) {
   button,a,input,select,textarea { transition: none; }
 }
+
+.market-view-switch { display: flex; gap: 8px; margin-bottom: 20px; }
+.market-view-switch button { border: 1px solid #dae4ec; border-radius: 10px; padding: 10px 17px; background: white; color: #64748b; }
+.market-view-switch button[aria-pressed="true"] { background: #e1f4ef; border-color: #69bda9; color: #087f6b; font-weight: 600; }
+.comparison-controls fieldset { border: 0; padding: 0; margin: 20px 0; min-width: 0; }
+.comparison-controls legend { color: #526379; font-size: 12px; margin-bottom: 12px; }
+.stock-picker { display: flex; flex-wrap: wrap; gap: 9px; }
+.stock-picker label { display: flex; align-items: center; gap: 7px; border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 10px; cursor: pointer; font-size: 12px; }
+.stock-picker label.selected { background: #effaf6; border-color: #9dd5c7; }
+.stock-picker input,.curve-toggle input { accent-color: #087f6b; }
+.stock-picker span { color: #64748b; font-size: 11px; }
+.comparison-options { display: flex; gap: 14px; align-items: end; flex-wrap: wrap; }
+.comparison-options>label { flex: 1; min-width: 180px; font-size: 12px; color: #526379; }
+.comparison-options select,.comparison-inspector select { width: 100%; display: block; margin-top: 7px; }
+.comparison-chip { color: #087f6b; background: #e9f7f1; border-radius: 20px; font-size: 10px; padding: 7px 12px; white-space: nowrap; }
+.curve-toggle { display: flex; gap: 8px; align-items: center; font-size: 12px; white-space: nowrap; }
+.comparison-summary { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 12px; margin: 22px 0; }
+.comparison-summary>div { background: #f7f9fc; border-radius: 10px; border-top: 3px solid; padding: 17px; }
+.comparison-summary span,.comparison-summary small { display: block; color: #64748b; font-size: 10px; }
+.comparison-summary b { display: block; font-size: 23px; margin: 8px 0; color: #14263e; }
+.comparison-chart { min-width: 0; }
+.comparison-chart-shell { overflow-x: auto; }
+.comparison-inspector { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 12px; }
+.comparison-inspector>label { font-size: 11px; color: #64748b; }
+.comparison-inspector .chart-legend { margin: 0; gap: 15px; flex-wrap: wrap; }
+.comparison-sources { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 22px; }
+@media(max-width:650px) {
+  .comparison-chip { display: none; }
+  .comparison-options { flex-direction: column; align-items: stretch; }
+  .comparison-options>label { min-width: 0; width: 100%; }
+  .comparison-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .comparison-inspector>label { width: 100%; }
+  .stock-picker label { flex: 1 1 125px; }
+  .market-view-switch button { padding: 10px 12px; font-size: 12px; }
+}
+.research-workspace { grid-template-columns: minmax(0,1fr); } .research-workspace>.card { min-width: 0; } .comparison-chart-shell { max-width: 100%; }
+@media(max-width:650px) { .comparison-chart { min-width: 650px; } }

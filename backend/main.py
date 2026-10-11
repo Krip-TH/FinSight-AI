@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from backend.research import financial_series, topic_evidence
-from backend.market import market_history
+from backend.market import market_history, stock_comparison
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(os.getenv('SEMINAR_DATA_DIR', str(ROOT/'data')))
@@ -39,6 +39,10 @@ async def lifespan(app):
     init_db(); yield
 
 app=FastAPI(title='AI Investment Research Intelligence Platform', lifespan=lifespan)
+
+@app.get('/api/market/compare')
+async def compare_stock_prices(symbols: str='AAPL,MSFT', period: str='5y', frequency: str='quarterly'):
+    return await stock_comparison(symbols.split(','),period,frequency)
 
 @app.get('/api/market/history')
 async def historical_prices(symbol:str='AAPL',period:str='1mo'):

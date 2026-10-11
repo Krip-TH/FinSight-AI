@@ -1,4 +1,5 @@
 import React,{useEffect,useState} from 'react';
+import StockComparison from './StockComparison.jsx';
 const colors=['#0f766e','#6366f1'];
 const fmt=n=>Number(n).toLocaleString('th-TH',{maximumFractionDigits:2});
 async function get(path,signal){const r=await fetch('/api'+path,{signal});const body=await r.json();if(!r.ok)throw new Error(body.detail||'โหลดข้อมูลไม่สำเร็จ');return body;}
@@ -38,7 +39,7 @@ export function ResearchDashboard({docs,onEvidence}){
   </div>;
 }
 
-export function MarketDashboard(){
+function SingleAssetDashboard(){
   const [symbol,setSymbol]=useState('AAPL'),[period,setPeriod]=useState('1mo'),[data,setData]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
   async function load(){setBusy(true);setError('');setData(null);try{setData(await get(`/market/history?symbol=${symbol}&period=${period}`))}catch(e){setError(e.message)}finally{setBusy(false)}}
   const points=data?.points||[],low=points.length?Math.min(...points.map(p=>p.close)):0,high=points.length?Math.max(...points.map(p=>p.close)):0,span=high-low||1;
@@ -49,4 +50,10 @@ export function MarketDashboard(){
       <svg className="research-chart" viewBox="0 0 760 310" role="img" aria-label={`กราฟราคาปิดย้อนหลัง ${data.symbol}`}><text x="15" y="62" fontSize="12">{fmt(high)}</text><text x="15" y="257" fontSize="12">{fmt(low)}</text><polyline points={line} fill="none" stroke="#0f766e" strokeWidth="3"/>{points.map((p,i)=><circle key={p.timestamp} cx={65+i/(points.length-1)*640} cy={255-(p.close-low)/span*195} r="3" fill="#0f766e"><title>{p.date}: {fmt(p.close)} {data.currency}</title></circle>)}<text x="65" y="285" fontSize="12">{points[0].date}</text><text x="705" y="285" textAnchor="end" fontSize="12">{points.at(-1).date}</text></svg>
       <p className="footnote">* ไม่รวมปันผล ค่าธรรมเนียม และการปรับแตกหุ้น ช่วงวันหยุดหุ้นกับคริปโตมีจำนวนจุดต่างกัน กราฟเว้นระยะตามลำดับจุดข้อมูล</p><a href={data.source_url} target="_blank" rel="noreferrer" className="source-link">ตรวจแหล่งข้อมูล · {data.source}</a><p className="footnote">ดึงข้อมูล {new Date(data.fetched_at).toLocaleString('th-TH')} {data.cached?'· ใช้ cache อายุไม่เกิน 15 นาที':''}</p>{data.limitations.map(x=><p key={x} className="footnote">• {x}</p>)}<details><summary>ดูข้อมูลที่ใช้วาดกราฟ</summary><div className="table-wrap"><table><thead><tr><th>วันที่ UTC</th><th>ราคาปิด · {data.currency}</th></tr></thead><tbody>{points.map(p=><tr key={p.timestamp}><td>{p.date}</td><td>{fmt(p.close)}</td></tr>)}</tbody></table></div></details></div>:!busy&&!error&&<div className="card empty">เลือกสินทรัพย์และช่วงเวลา แล้วโหลดข้อมูลจริงจากแหล่งราคา</div>}
     <p className="footnote">ข้อมูลย้อนหลังช่วยตรวจบริบท ไม่รับรองผลตอบแทนในอนาคต และไม่มีสัญญาณซื้อขาย</p></div>;
+}
+
+
+export function MarketDashboard(){
+  const [mode,setMode]=useState('comparison');
+  return <><div className="market-view-switch" aria-label="มุมมองข้อมูลราคา"><button aria-pressed={mode==='comparison'} onClick={()=>setMode('comparison')}>เปรียบเทียบหุ้น</button><button aria-pressed={mode==='single'} onClick={()=>setMode('single')}>ราคาสินทรัพย์เดียว</button></div>{mode==='comparison'?<StockComparison/>:<SingleAssetDashboard/>}</>;
 }
