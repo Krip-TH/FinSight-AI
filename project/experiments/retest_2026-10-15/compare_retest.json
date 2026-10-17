@@ -1,0 +1,112 @@
+{
+  "type": "live_provider_retest",
+  "started_at_utc": "2026-10-15T15:17:32.774346+00:00",
+  "operation": "compare",
+  "request": {
+    "doc_ids": [
+      "9e26c19bb04b48249ff680ba65e12b63",
+      "4a4680e151a24e6382c1d58743127ffe"
+    ],
+    "use_cache": false
+  },
+  "model": "gemini-3.5-flash-lite",
+  "prompt_version": "grounded-v1",
+  "http_status": 200,
+  "client_elapsed_ms": 11613.55,
+  "health_before": {
+    "status": "ok",
+    "ai_ready": true,
+    "model": "gemini-3.5-flash-lite",
+    "prompt_version": "grounded-v1",
+    "provider": "Gemini",
+    "max_upload_mb": 25,
+    "max_requests": 2,
+    "requests_used": 1,
+    "requests_remaining": 1
+  },
+  "health_after": {
+    "status": "ok",
+    "ai_ready": true,
+    "model": "gemini-3.5-flash-lite",
+    "prompt_version": "grounded-v1",
+    "provider": "Gemini",
+    "max_upload_mb": 25,
+    "max_requests": 2,
+    "requests_used": 2,
+    "requests_remaining": 0
+  },
+  "result": {
+    "title": "สรุปและเปรียบเทียบผลการดำเนินงาน Apple และ Microsoft",
+    "status": "answered",
+    "claims": [
+      {
+        "label": "Apple รอบบัญชีปี 2025",
+        "text": "รอบบัญชีของ Apple สำหรับปี 2025 สิ้นสุดวันที่ 27 กันยายน 2025",
+        "quote": "Years ended\nSeptember 27,\n2025",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 32,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "Apple ปัจจัยเสี่ยงด้านภาษีศุลกากรและมาตรการอื่น",
+        "text": "Apple ระบุว่าภาษีศุลกากรและมาตรการอื่นๆ อาจส่งผลกระทบเชิงลบอย่างมีนัยสำคัญต่อธุรกิจ ผลการดำเนินงาน และฐานะการเงิน รวมถึงห่วงโซ่อุปทาน",
+        "quote": "Tariffs and other measures that are applied to the Company’s products or their components can have a material adverse impact on the Company’s business, results of operations and financial condition, including impacting the Company’s supply chain",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 25,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:25:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "Microsoft รอบบัญชีปี 2025",
+        "text": "รอบบัญชีของ Microsoft สำหรับปี 2025 สิ้นสุดวันที่ 30 มิถุนายน 2025",
+        "quote": "Year Ended June 30, \n2025",
+        "doc_id": "4a4680e151a24e6382c1d58743127ffe",
+        "page": 49,
+        "chunk_id": "4a4680e151a24e6382c1d58743127ffe:49:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      }
+    ],
+    "limitations": [
+      "เอกสารของ Apple และ Microsoft ใช้รอบปีบัญชีที่สิ้นสุดต่างกัน (27 กันยายน 2025 และ 30 มิถุนายน 2025 ตามลำดับ) จึงไม่ควรนำมาเทียบเคียงช่วงเวลาตรงกันในทุกมิติโดยตรง",
+      "ตัดข้อกล่าวอ้าง 3 รายการที่ตรวจข้อความหลักฐานไม่ผ่าน",
+      "ตรวจพบข้อความอ้างอิงในเอกสารแล้ว แต่ยังต้องตรวจว่าหลักฐานรองรับความหมายและตัวเลขของคำตอบ"
+    ],
+    "rejected_claims": 3,
+    "model": "gemini-3.5-flash-lite",
+    "prompt_version": "grounded-v1",
+    "cached": false,
+    "elapsed_ms": 11603.32,
+    "retrieval_ms": 23.43,
+    "api_ms": 11578.92,
+    "usage": {
+      "promptTokenCount": 10799,
+      "candidatesTokenCount": 1056,
+      "totalTokenCount": 11855,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 10799
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "documents": [
+      {
+        "id": "9e26c19bb04b48249ff680ba65e12b63",
+        "name": "Apple_FY2025_10K.pdf",
+        "period": "FY2025 สิ้นสุด 27 กันยายน 2025",
+        "company": "Apple"
+      },
+      {
+        "id": "4a4680e151a24e6382c1d58743127ffe",
+        "name": "Microsoft_FY2025_10K.pdf",
+        "period": "FY2025 สิ้นสุด 30 มิถุนายน 2025",
+        "company": "Microsoft"
+      }
+    ],
+    "run_id": "796b469ea797438eac7cd8cf4e37d9ca"
+  },
+  "cache_allowed": false,
+  "automatic_retries": 0
+}

@@ -1,0 +1,83 @@
+{
+  "checked_at": "2026-10-15T15:15:15.162605+00:00",
+  "technical_tests": {
+    "passed": 23,
+    "duration_seconds": 1.01,
+    "provider": "mock/test fixtures; no live Gemini calls",
+    "command": "pytest backend -q -p no:cacheprovider",
+    "scope": "current D:/FinSight-AI/backend revision; separate temporary test databases"
+  },
+  "ai_ready_at_start": false,
+  "new_provider_calls": 0,
+  "preflight": [
+    {
+      "operation": "summary",
+      "selected_document_ids": [
+        "9e26c19bb04b48249ff680ba65e12b63"
+      ],
+      "retrieved_chunk_count": 12,
+      "evidence_pages": {
+        "Apple": [
+          8,
+          24,
+          25,
+          26,
+          27,
+          30,
+          32,
+          33,
+          37,
+          38,
+          39,
+          50
+        ]
+      },
+      "has_evidence_from_every_selected_document": true
+    },
+    {
+      "operation": "compare",
+      "selected_document_ids": [
+        "9e26c19bb04b48249ff680ba65e12b63",
+        "4a4680e151a24e6382c1d58743127ffe"
+      ],
+      "retrieved_chunk_count": 12,
+      "evidence_pages": {
+        "Apple": [
+          25,
+          26,
+          27,
+          32,
+          38,
+          39
+        ],
+        "Microsoft": [
+          34,
+          37,
+          38,
+          40,
+          49,
+          50
+        ]
+      },
+      "has_evidence_from_every_selected_document": true
+    }
+  ],
+  "documents": [
+    {
+      "company": "Apple",
+      "period": "FY2025 สิ้นสุด 27 กันยายน 2025",
+      "pages": 80,
+      "sha256": "3eb270b22acb7d8d8e9c32a43dc221dec3345f8e4bca02755fdbc1ee16c823de",
+      "local_pdf_exists": true
+    },
+    {
+      "company": "Microsoft",
+      "period": "FY2025 สิ้นสุด 30 มิถุนายน 2025",
+      "pages": 158,
+      "sha256": "f0e97f9c1f0efbf7d1cb4fc627f23abe44f9844aa83689dcb2c666ac192d5489",
+      "local_pdf_exists": true
+    }
+  ],
+  "source_main_sha256": "9c04c2827238e7761852be080ca96c59943d98f1f3b83323a612747394063a27",
+  "live_status": "Waiting for user to set API key and authorize max 2 calls in application settings"
+}

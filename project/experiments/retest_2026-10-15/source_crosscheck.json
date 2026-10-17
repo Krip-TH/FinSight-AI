@@ -1,0 +1,99 @@
+{
+  "checked_at_utc": "2026-10-15T15:25:23.022409+00:00",
+  "checks": [
+    {
+      "operation": "summary",
+      "retained_claims": 7,
+      "rejected_claims": 1,
+      "source_presence": [
+        {
+          "claim_number": 1,
+          "label": "รอบบัญชี (Fiscal Year)",
+          "company": "Apple",
+          "pdf_page": 24,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 2,
+          "label": "หน่วย (Units)",
+          "company": "Apple",
+          "pdf_page": 32,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 3,
+          "label": "รายได้รวม (Total Net Sales) ปี 2025 และ 2024",
+          "company": "Apple",
+          "pdf_page": 32,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 4,
+          "label": "กำไรสุทธิ (Net Income) ปี 2025 และ 2024",
+          "company": "Apple",
+          "pdf_page": 32,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 5,
+          "label": "แนวโน้มอัตรากำไรขั้นต้น (Gross Margin Trend)",
+          "company": "Apple",
+          "pdf_page": 27,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 6,
+          "label": "ปัจจัยเสี่ยงด้านภาษีศุลกากร (Tariffs Risk)",
+          "company": "Apple",
+          "pdf_page": 25,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 7,
+          "label": "ปัจจัยเสี่ยงด้านเศรษฐกิจมหภาค (Macroeconomic Risks)",
+          "company": "Apple",
+          "pdf_page": 8,
+          "quote_found_on_pdf_page": true
+        }
+      ],
+      "semantic_scoring": "Not performed by two independent reviewers",
+      "coverage_note": "Summary has financial values for Apple. Comparison is partial: fiscal dates for both companies and an Apple risk; no complete paired revenue/net-income comparison."
+    },
+    {
+      "operation": "compare",
+      "retained_claims": 3,
+      "rejected_claims": 3,
+      "source_presence": [
+        {
+          "claim_number": 1,
+          "label": "Apple รอบบัญชีปี 2025",
+          "company": "Apple",
+          "pdf_page": 32,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 2,
+          "label": "Apple ปัจจัยเสี่ยงด้านภาษีศุลกากรและมาตรการอื่น",
+          "company": "Apple",
+          "pdf_page": 25,
+          "quote_found_on_pdf_page": true
+        },
+        {
+          "claim_number": 3,
+          "label": "Microsoft รอบบัญชีปี 2025",
+          "company": "Microsoft",
+          "pdf_page": 49,
+          "quote_found_on_pdf_page": true
+        }
+      ],
+      "semantic_scoring": "Not performed by two independent reviewers",
+      "coverage_note": "Summary has financial values for Apple. Comparison is partial: fiscal dates for both companies and an Apple risk; no complete paired revenue/net-income comparison."
+    }
+  ],
+  "new_live_calls": 2,
+  "limit": 2,
+  "automatic_retries": 0,
+  "technical_test_passed": 23,
+  "model_documentation": "https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite",
+  "note": "Quote presence is a technical check only, not an accuracy score. Original failures remain retained."
+}

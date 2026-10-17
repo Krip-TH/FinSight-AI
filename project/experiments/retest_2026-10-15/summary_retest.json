@@ -1,0 +1,140 @@
+{
+  "type": "live_provider_retest",
+  "started_at_utc": "2026-10-15T15:17:18.364117+00:00",
+  "operation": "summary",
+  "request": {
+    "doc_ids": [
+      "9e26c19bb04b48249ff680ba65e12b63"
+    ],
+    "use_cache": false
+  },
+  "model": "gemini-3.5-flash-lite",
+  "prompt_version": "grounded-v1",
+  "http_status": 200,
+  "client_elapsed_ms": 5540.93,
+  "health_before": {
+    "status": "ok",
+    "ai_ready": true,
+    "model": "gemini-3.5-flash-lite",
+    "prompt_version": "grounded-v1",
+    "provider": "Gemini",
+    "max_upload_mb": 25,
+    "max_requests": 2,
+    "requests_used": 0,
+    "requests_remaining": 2
+  },
+  "health_after": {
+    "status": "ok",
+    "ai_ready": true,
+    "model": "gemini-3.5-flash-lite",
+    "prompt_version": "grounded-v1",
+    "provider": "Gemini",
+    "max_upload_mb": 25,
+    "max_requests": 2,
+    "requests_used": 1,
+    "requests_remaining": 1
+  },
+  "result": {
+    "title": "สรุปและเปรียบเทียบผลการดำเนินงาน รายได้ กำไรสุทธิ รอบบัญชี แนวโน้ม และปัจจัยเสี่ยงของ Apple ประจำปีงบประมาณ 2025",
+    "status": "answered",
+    "claims": [
+      {
+        "label": "รอบบัญชี (Fiscal Year)",
+        "text": "รอบบัญชีของบริษัทสิ้นสุดในวันเสาร์สุดท้ายของเดือนกันยายน โดยปีงบประมาณ 2025 สิ้นสุดวันที่ 27 กันยายน 2025 และปีงบประมาณ 2024 สิ้นสุดวันที่ 28 กันยายน 2024",
+        "quote": "The Company’s fiscal year is the 52- or 53-week period that ends on the last Saturday of September.",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 24,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:24:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "หน่วย (Units)",
+        "text": "งบกำไรขาดทุนแสดงตัวเลขรายได้และผลการดำเนินงานเป็นหน่วยล้านดอลลาร์สหรัฐ ยกเว้นจำนวนหุ้นและข้อมูลต่อหุ้น",
+        "quote": "(In millions, except number of shares, which are reflected in thousands, and per-share amounts)",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 32,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "รายได้รวม (Total Net Sales) ปี 2025 และ 2024",
+        "text": "รายได้สุทธิรวมสำหรับปีสิ้นสุดวันที่ 27 กันยายน 2025 เท่ากับ 416,161 ล้านดอลลาร์สหรัฐ และสำหรับปีสิ้นสุดวันที่ 28 กันยายน 2024 เท่ากับ 391,035 ล้านดอลลาร์สหรัฐ",
+        "quote": "Total net sales \n 416,161 \n \n391,035",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 32,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "กำไรสุทธิ (Net Income) ปี 2025 และ 2024",
+        "text": "กำไรสุทธิสำหรับปีสิ้นสุดวันที่ 27 กันยายน 2025 เท่ากับ 112,010 ล้านดอลลาร์สหรัฐ และสำหรับปีสิ้นสุดวันที่ 28 กันยายน 2024 เท่ากับ 93,736 ล้านดอลลาร์สหรัฐ",
+        "quote": "Net income\n$ \n112,010 \n$ \n93,736",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 32,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:32:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "แนวโน้มอัตรากำไรขั้นต้น (Gross Margin Trend)",
+        "text": "บริษัทเชื่อว่าโดยทั่วไปอัตรากำไรขั้นต้นจะยังคงมีความผันผวนและเผชิญกับแรงกดดันให้ปรับตัวลดลง",
+        "quote": "As a result, the Company believes, in general, gross margins will be subject to volatility and downward pressure.",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 27,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:27:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "ปัจจัยเสี่ยงด้านภาษีศุลกากร (Tariffs Risk)",
+        "text": "ภาษีศุลกากรและมาตรการอื่นๆ ที่นำมาใช้กับผลิตภัณฑ์หรือส่วนประกอบของบริษัทอาจส่งผลกระทบในทางลบอย่างมีนัยสำคัญต่อธุรกิจ ผลการดำเนินงาน และฐานะการเงิน รวมถึงห่วงโซ่อุปทานและอัตรากำไรขั้นต้น",
+        "quote": "Tariffs and other measures that are applied to the Company’s products or their components can have a material adverse impact on the Company’s business, results of operations and financial condition, including impacting the Company’s supply chain, the availability of rare earths and other raw materials and components, pricing and gross margin.",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 25,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:25:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      },
+      {
+        "label": "ปัจจัยเสี่ยงด้านเศรษฐกิจมหภาค (Macroeconomic Risks)",
+        "text": "สภาพเศรษฐกิจมหภาคในระดับภูมิภาคและระดับโลกที่อาจมีความไม่แน่นอนหรือปรับตัวแย่ลง รวมถึงอัตราเงินเฟ้อ อัตราดอกเบี้ย และความผันผวนของค่าเงิน สามารถส่งผลกระทบต่อความเชื่อมั่นและการใช้จ่ายของผู้บริโภค",
+        "quote": "The Company’s operations and performance depend significantly on global and regional economic conditions and adverse economic conditions can materially adversely affect the Company’s business, results of operations, financial condition and stock price.",
+        "doc_id": "9e26c19bb04b48249ff680ba65e12b63",
+        "page": 8,
+        "chunk_id": "9e26c19bb04b48249ff680ba65e12b63:8:0",
+        "source_validation": "exact_quote_found; semantic correctness requires human review"
+      }
+    ],
+    "limitations": [
+      "ตัดข้อกล่าวอ้าง 1 รายการที่ตรวจข้อความหลักฐานไม่ผ่าน",
+      "ตรวจพบข้อความอ้างอิงในเอกสารแล้ว แต่ยังต้องตรวจว่าหลักฐานรองรับความหมายและตัวเลขของคำตอบ"
+    ],
+    "rejected_claims": 1,
+    "model": "gemini-3.5-flash-lite",
+    "prompt_version": "grounded-v1",
+    "cached": false,
+    "elapsed_ms": 5527.24,
+    "retrieval_ms": 8.81,
+    "api_ms": 5517.96,
+    "usage": {
+      "promptTokenCount": 10921,
+      "candidatesTokenCount": 1492,
+      "totalTokenCount": 12413,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 10921
+        }
+      ],
+      "serviceTier": "standard"
+    },
+    "documents": [
+      {
+        "id": "9e26c19bb04b48249ff680ba65e12b63",
+        "name": "Apple_FY2025_10K.pdf",
+        "period": "FY2025 สิ้นสุด 27 กันยายน 2025",
+        "company": "Apple"
+      }
+    ],
+    "run_id": "97cd092d6e954b52aa8ea675387f9268"
+  },
+  "cache_allowed": false,
+  "automatic_retries": 0
+}
