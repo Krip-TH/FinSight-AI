@@ -56,6 +56,15 @@ def test_thai_financial_query_keeps_income_statement(service):
     chunk=m.retrieve([id],'ค่าใช้จ่ายวิจัยและพัฒนาปีบัญชี 2025 เท่าไร',1)[0]
     assert 'INCOME STATEMENTS' in chunk['text']
 
+def test_partial_evidence_keeps_insufficient_status_and_source_page(service):
+    m,c=service;id=put(c);chunks=m.retrieve([id],'Revenue',1)
+    result=m.validate_answer({'status':'insufficient','claims':[
+        {'label':'Revenue','text':'123 million','chunk_id':chunks[0]['id'],
+         'quote':'Revenue USD 123 million'}]},chunks)
+    assert result['status']=='insufficient'
+    assert result['claims'][0]['page']==1
+    assert result['claims'][0]['quote']=='Revenue USD 123 million'
+
 def test_mock_provider_cache_logging_and_csv(service,monkeypatch):
     m,c=service;id=put(c);calls=[]
     async def fixture_provider(prompt):

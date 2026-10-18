@@ -16,7 +16,7 @@ DATA = Path(os.getenv('SEMINAR_DATA_DIR', str(ROOT/'data')))
 DATA.mkdir(parents=True, exist_ok=True)
 UPLOADS = DATA/'uploads'; UPLOADS.mkdir(exist_ok=True)
 DB = DATA/'seminar.sqlite3'
-PROMPT_VERSION = 'grounded-v1'
+PROMPT_VERSION = 'grounded-v3'
 CONFIG = {'key': os.getenv('GEMINI_API_KEY', ''), 'model': os.getenv('GEMINI_MODEL', 'gemini-3.5-flash-lite'),
           'enabled': os.getenv('AI_REQUESTS_APPROVED','').lower() == 'true',
           'max_requests': 3, 'requests_used': 0}
@@ -189,6 +189,12 @@ or claim calendar periods are identical just because fiscal year labels match. P
 Every factual claim MUST contain an exact verbatim quote from ONE provided chunk and its chunk_id.
 If evidence is insufficient, return status=insufficient and say what is missing. Do not invent values or quotes.
 For comparison, return rows for both documents with matching labels; if unavailable state missing in limitations.
+Comparison labels must be topic names only, never include company or document names.
+Use the same label for the same topic in both documents, for example รอบปีบัญชี, รายได้รวม, กำไรสุทธิ.
+For financial figures, explicitly retain the fiscal year, units and currency stated in the evidence.
+Include each document's fiscal year-end date when available; never infer it from company name or metadata.
+Missing retrieved evidence does not mean that the company lacks the information.
+Your text is an AI summary; quotes must remain exact source text. Do not claim that quote matching proves semantic accuracy.
 Return ONLY JSON: {"title":"...","status":"answered|insufficient","claims":[{"label":"...",
 "text":"...","chunk_id":"...","quote":"exact substring from that chunk"}],"limitations":["..."]}.
 At most 12 concise claims. Text may explain a quote but cannot introduce unsupported facts.'''
@@ -206,7 +212,7 @@ def validate_answer(raw,chunks):
     limitations=[str(x)[:1000] for x in raw.get('limitations',[]) if isinstance(x,str)][:10]
     if rejected: limitations.append(f'ตัดข้อกล่าวอ้าง {rejected} รายการที่ตรวจข้อความหลักฐานไม่ผ่าน')
     limitations.append('ตรวจพบข้อความอ้างอิงในเอกสารแล้ว แต่ยังต้องตรวจว่าหลักฐานรองรับความหมายและตัวเลขของคำตอบ')
-    return {'title':str(raw.get('title','ผลวิเคราะห์'))[:200],'status':'answered' if checked else 'insufficient',
+    return {'title':str(raw.get('title','ผลวิเคราะห์'))[:200],'status':'answered' if checked and raw.get('status') != 'insufficient' else 'insufficient',
             'claims':checked,'limitations':limitations,'rejected_claims':rejected}
 
 async def call_gemini(prompt):
